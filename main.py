@@ -1,6 +1,8 @@
 import os
 import sys
 
+from download import download_anime
+
 try:
     import requests
     from bs4 import BeautifulSoup
@@ -39,8 +41,8 @@ if sys.argv[1] == '-s':
     for i in range(9):
         print(f'[{i + 1}]', list(titles.keys())[i])
     choice = input("Please Choose (1-9):")
-    print('https://aniwavetv.to'+titles[list(titles.keys())[int(choice)-1]])
-
+    anilink = 'https://aniwavetv.to'+titles[list(titles.keys())[int(choice)-1]]
+    download_anime(anilink)
 
 # print(soup.prettify())
 # attributes_dictionary = soup.find('div').attrs
