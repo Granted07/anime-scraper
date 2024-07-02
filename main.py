@@ -1,7 +1,8 @@
 import os
 import sys
+import time
 
-from download import download_anime
+# from download import download_anime
 
 try:
     import requests
@@ -11,7 +12,6 @@ except:
     os.system('python -m pip install requests beautifulsoup4')
 
 # Making a GET request
-r = requests.get('https://aniwavetv.to/home')
 
 # check status code for response received
 # success code - 200
@@ -22,10 +22,12 @@ r = requests.get('https://aniwavetv.to/home')
 titles = {}
 
 
-def find_title(soup):
-    find_soup = soup.find_all('a', class_='d-title')
+def find_title(soupfn):
+    find_soup = soupfn.find_all('p', class_='name', )
     for i in find_soup:
-        titles[i.text] = i.attrs['href']
+        # print(i)
+        for j in i.find_all('a'):
+            titles[j.get_text()]=j.attrs['href']
     return titles
 
 
@@ -34,15 +36,23 @@ def find_title(soup):
 
 if sys.argv[1] == '-s':
     search = sys.argv[2].replace(' ', '+')
-    link = 'https://aniwavetv.to/filter?keyword=' + search
-    search_source = requests.get(link)
+    link = 'https://gogoanime3.co/search.html?keyword=' + search
+    requests.get(link).close()
+    search_source = requests.get(link, timeout=10)
+    # time.sleep(5)
     soup = BeautifulSoup(search_source.content, 'html.parser')
     titles = find_title(soup)
+    # f = open('allspan.html','w')
+    # f.write(str(titles))
+    # f.close()
     for i in range(9):
-        print(f'[{i + 1}]', list(titles.keys())[i])
+        try:
+            print(f'[{i + 1}]', list(titles.keys())[i])
+        except:
+            break
     choice = input("Please Choose (1-9):")
-    anilink = 'https://aniwavetv.to'+titles[list(titles.keys())[int(choice)-1]]
-    download_anime(anilink)
-
+    anilink = 'https://gogoanime3.co'+titles[list(titles.keys())[int(choice)-1]]
+    # download_anime(anilink)
+    print(anilink)
 # print(soup.prettify())
 # attributes_dictionary = soup.find('div').attrs
