@@ -1,7 +1,16 @@
-import requests
-from bs4 import BeautifulSoup
+import os
 
 from download import get_download_link
+
+try:
+    import requests
+    from bs4 import BeautifulSoup
+except:
+    print('installing modules...')
+    os.system('python -m pip install requests beautifulsoup4')
+    import requests
+    from bs4 import BeautifulSoup
+
 
 
 def find_ep(gogolink):

@@ -1,10 +1,7 @@
 import os
 import sys
-import time
 
 from episodes import find_ep
-
-# from download import download_anime
 
 try:
     import requests
@@ -15,13 +12,8 @@ except:
     import requests
     from bs4 import BeautifulSoup
 
-# Making a GET request
-
 # check status code for response received
 # success code - 200
-# print(r)
-# pageurl = https://aniwavetv.to/home
-# print content of request
 
 titles = {}
 
@@ -34,9 +26,6 @@ def find_title(soupfn):
             titles[j.get_text()] = j.attrs['href']
     return titles
 
-
-# soup = BeautifulSoup(r.content, 'html.parser')
-# print(soup.find('input').attrs)
 
 if sys.argv[1] == '-s':
     search = sys.argv[2].replace(' ', '+')
@@ -65,12 +54,3 @@ if sys.argv[1] == '-s':
     gogolink = 'https://gogoanime3.co' + titles[list(titles.keys())[int(choice) - 1]]
     print(gogolink)
     find_ep(gogolink)
-    #
-    # r = requests.get(link, timeout=10, headers=headers)
-    # soup = BeautifulSoup(r.content, 'html.parser')
-    # eps = soup.find_all('div', class_='name')
-    # for i in eps:
-    #     print(i.get_text())
-
-# print(soup.prettify())
-# attributes_dictionary = soup.find('div').attrs
