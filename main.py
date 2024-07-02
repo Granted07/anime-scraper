@@ -2,7 +2,7 @@ import os
 import sys
 import time
 
-from episodes import download_anime
+from episodes import find_ep
 
 # from download import download_anime
 
@@ -31,7 +31,7 @@ def find_title(soupfn):
     for i in find_soup:
         # print(i)
         for j in i.find_all('a'):
-            titles[j.get_text()]=j.attrs['href']
+            titles[j.get_text()] = j.attrs['href']
     return titles
 
 
@@ -40,14 +40,16 @@ def find_title(soupfn):
 
 if sys.argv[1] == '-s':
     search = sys.argv[2].replace(' ', '+')
-    headers = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
     link = 'https://gogoanime3.co/search.html?keyword=' + search
-    try:
-        search_source = requests.get(link, timeout=10, headers=headers)
-        # requests.session().close()
-    except Exception as e:
-        print(e)
-        exit()
+    f = True
+    while f:
+        try:
+            search_source = requests.get(link, timeout=10, headers=headers)
+            f = 0
+        except:
+            continue
     # time.sleep(5)
     soup = BeautifulSoup(search_source.content, 'html.parser')
     titles = find_title(soup)
@@ -62,7 +64,7 @@ if sys.argv[1] == '-s':
     choice = input("Please Choose (1-9):")
     gogolink = 'https://gogoanime3.co' + titles[list(titles.keys())[int(choice) - 1]]
     print(gogolink)
-    download_anime(gogolink)
+    find_ep(gogolink)
     #
     # r = requests.get(link, timeout=10, headers=headers)
     # soup = BeautifulSoup(r.content, 'html.parser')
