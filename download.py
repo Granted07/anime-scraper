@@ -11,7 +11,8 @@ except:
     from bs4 import BeautifulSoup
     from selenium import webdriver
 
-def get_download_link(epNumber, gogolink):
+
+def get_download_link(epNumber, gogolink, cookies, cookiesg):
     global search
     link = gogolink.replace('category/', '') + '-episode-' + str(epNumber)
     print(link)
@@ -29,32 +30,40 @@ def get_download_link(epNumber, gogolink):
     downlink = soup.find('li', class_='dowloads').find('a')['href']
     open('test.html', 'w', encoding='utf-8').write(str(downlink))
     print(downlink)
-    download_episode(downlink, epNumber)
+    download_episode(downlink, epNumber, cookies, cookiesg)
 
 
-def download_episode(link, episodenumber):
-    global j
-    options = webdriver.FirefoxOptions()
-    # options.add_argument("-profile")
-    options.add_argument("-headless")
-    driver = webdriver.Firefox(options=options)
-    print("Fetching Download Options, please wait a sec...")
-    # wait = WebDriverWait(driver, 100)
-    driver.get(link)
-    html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
-    driver.quit()
-    # print(html)
-    open('test.html', 'w', encoding='utf-8').write(str(html))
-    # f = True
-    # while f:
-    #     try:
-    #         s = requests.Session()
-    #         search_source = s.get(link, timeout=10, allow_redirects=True)
-    #         time.sleep(5)
-    #         f = 0
-    #     except:
-    #         continue
-    soup = BeautifulSoup(html, 'html.parser')
+def download_episode(link, episodenumber, cookies, cookiesg):
+    global j, html
+    # options = webdriver.FirefoxOptions()
+    # # options.add_argument("-profile")
+    # options.add_argument("-headless")
+    # driver = webdriver.Firefox(options=options)
+    # print("Fetching Download Options, please wait a sec...")
+    # # wait = WebDriverWait(driver, 100)
+    # driver.get(link)
+    # html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
+    # driver.quit()
+    # # print(html)
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
+    f = True
+    while f:
+        try:
+            s = requests.Session()
+            # html = s.get(link, timeout=10, headers=headers)
+            print(cookiesg)
+            for c in cookies:
+                s.cookies.set(c, cookies[c])
+            for c in cookiesg:
+                s.cookies.set(c, cookiesg[c])
+            html = s.get(link, headers=headers, timeout = 10)
+            f = 0
+        except:
+            continue
+
+    soup = BeautifulSoup(html.content, 'html.parser')
     dows = soup.findAll('div', class_='dowload')
     c = 0
     for links in dows:
