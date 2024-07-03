@@ -49,6 +49,6 @@ for i in range(9):
         print(f'[{i + 1}]', list(titles.keys())[i])
     except:
         break
-choice = input(f"Please Choose (1-{i}):")
+choice = input(f"Please Choose (1-{i}): ")
 gogolink = 'https://gogoanime3.co' + titles[list(titles.keys())[int(choice) - 1]]
 find_ep(gogolink)

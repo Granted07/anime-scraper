@@ -1,12 +1,12 @@
-from __future__ import unicode_literals
 
-import os
+import os,time
 
 try:
     import requests
     from bs4 import BeautifulSoup
     from selenium import webdriver
     from selenium.webdriver.support.ui import WebDriverWait
+    from clint.textui import progress
 except:
     print('installing modules...')
     os.system('pip install -r requirement.txt')
@@ -14,6 +14,7 @@ except:
     from bs4 import BeautifulSoup
     from selenium import webdriver
     from selenium.webdriver.support.ui import WebDriverWait
+    from clint.textui import progress
 
 
 def get_download_link(epNumber, gogolink):
@@ -47,6 +48,7 @@ def download_episode(link, episodenumber):
     driver = webdriver.Firefox(options=options)
     # wait = WebDriverWait(driver, 100)
     driver.get(link)
+    time.sleep(1.5)
     html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
     driver.quit()
     # print(html)
@@ -64,11 +66,10 @@ def download_episode(link, episodenumber):
     qchoice = int(input(f"Enter a a download option (1-{c}): "))
     print("Downloading...")
     url = dows[qchoice].find('a').attrs['href']
-    r = requests.get(url, allow_redirects=True).content
-    print(r.headers)
-    # with open(str(episodenumber)+'.mp4', 'wb') as f:
-    #     total_length = int(r.headers.get('content-length'))
-    #     for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
-    #         if chunk:
-    #             f.write(chunk)
-    #             f.flush()
+    r = requests.get(url)
+    with open(str(episodenumber)+'.mp4', 'wb') as f:
+        total_length = int(r.headers.get('Content-Length'))
+        for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
+            if chunk:
+                f.write(chunk)
+                f.flush()
