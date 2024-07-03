@@ -44,12 +44,12 @@ titles = find_title(soup)
 # f = open('allspan.html','w')
 # f.write(str(titles))
 # f.close()
+i=0
 for i in range(9):
     try:
         print(f'[{i + 1}]', list(titles.keys())[i])
     except:
         break
-choice = input("Please Choose (1-9):")
+choice = input(f"Please Choose (1-{i}):")
 gogolink = 'https://gogoanime3.co' + titles[list(titles.keys())[int(choice) - 1]]
-print(gogolink)
 find_ep(gogolink)
