@@ -1,17 +1,16 @@
 import os
 import sys
 
-from episodes import find_ep
-
 try:
-    import requests
+    import requests, ffmpeg, selenium, aiohttp, rich
     from bs4 import BeautifulSoup
 except:
     print('installing modules...')
-    os.system('python -m pip install requests beautifulsoup4')
+    os.system('pip install -r requirement.txt')
     import requests
     from bs4 import BeautifulSoup
 
+from episodes import find_ep
 # check status code for response received
 # success code - 200
 

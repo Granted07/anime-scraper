@@ -1,15 +1,19 @@
+from __future__ import unicode_literals
+
 import os
 
 try:
     import requests
     from bs4 import BeautifulSoup
     from selenium import webdriver
+    from selenium.webdriver.support.ui import WebDriverWait
 except:
     print('installing modules...')
-    os.system('python -m pip install requests beautifulsoup4')
+    os.system('pip install -r requirement.txt')
     import requests
     from bs4 import BeautifulSoup
     from selenium import webdriver
+    from selenium.webdriver.support.ui import WebDriverWait
 
 
 def get_download_link(epNumber, gogolink):
@@ -26,12 +30,12 @@ def get_download_link(epNumber, gogolink):
         except:
             continue
     soup = BeautifulSoup(search.text, 'html.parser')
-    downlink = soup.find('li', class_='vidcdn').find('a')['data-video']
-    content = requests.get(downlink).content
-    soup = BeautifulSoup(content, 'html.parser')
-    open('test.html', 'w').write(soup.prettify())
-    # downlink = soup.find('li', class_='dowloads').find('a')['href']
-    # download_episode(downlink, epNumber)
+    # downlink = soup.find('li', class_='vidcdn').find('a')['data-video']
+    # content = requests.get(downlink).content
+    # soup = remove_tags(content)
+    # open('test.html', 'w').write(soup)
+    downlink = soup.find('li', class_='dowloads').find('a')['href']
+    download_episode(downlink, epNumber)
 
 
 def download_episode(link, episodenumber):
@@ -59,9 +63,12 @@ def download_episode(link, episodenumber):
             break
     qchoice = int(input(f"Enter a a download option (1-{c}): "))
     print("Downloading...")
-    r = requests.get(dows[qchoice].find('a').attrs['href'], allow_redirects=True)
-    open(str(episodenumber) + '.mp4', 'wb').write(r.content)
-
-    # dowvalues.append(j.find('a'))
-    # print(dowclass[0])
-    # print(downlink, "\n", type(downlink))
+    url = dows[qchoice].find('a').attrs['href']
+    r = requests.get(url, allow_redirects=True).content
+    print(r.headers)
+    # with open(str(episodenumber)+'.mp4', 'wb') as f:
+    #     total_length = int(r.headers.get('content-length'))
+    #     for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
+    #         if chunk:
+    #             f.write(chunk)
+    #             f.flush()
