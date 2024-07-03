@@ -26,8 +26,12 @@ def get_download_link(epNumber, gogolink):
         except:
             continue
     soup = BeautifulSoup(search.text, 'html.parser')
-    downlink = soup.find('li', class_='dowloads').find('a')['href']
-    download_episode(downlink, epNumber)
+    downlink = soup.find('li', class_='vidcdn').find('a')['data-video']
+    content = requests.get(downlink).content
+    soup = BeautifulSoup(content, 'html.parser')
+    open('test.html', 'w').write(soup.prettify())
+    # downlink = soup.find('li', class_='dowloads').find('a')['href']
+    # download_episode(downlink, epNumber)
 
 
 def download_episode(link, episodenumber):
