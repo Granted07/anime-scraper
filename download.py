@@ -1,39 +1,21 @@
-import os, time, re
-import subprocess
-import sys
 
+import os, time
+import subprocess
 from progress import print_progress_bar
 
-# from progress import print_progress_bar
 
-
-def download(episodenumber, r):
+def download(episode_number, r):
     total_length = (int(r.headers.get('Content-Length'))) // 1024 ** 2
     print("Downloading...")
     print_progress_bar(0, total_length + 1, prefix='Progress:', suffix='Complete', length=50)
     i = 0
-    with open(str(episodenumber) + '.mp4', 'wb') as f:
+    with open(str(episode_number) + '.mp4', 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024 ** 2):
             if chunk:
                 i += 1
                 print_progress_bar(i, total_length, prefix='Progress:', suffix='Complete', length=50)
                 f.write(chunk)
                 f.flush()
-
-def stream(r):
-    with open(str('7.mp4') + '.mp4', 'wb') as f:
-        for chunk in r.iter_content(chunk_size=4000 ** 2):
-            if chunk:
-                f.write(chunk)
-                f.flush()
-                time.sleep(1)
-                try:
-                    os.startfile('7.mp4')
-                except:
-                    opener = "open" if sys.platform == "darwin" else "xdg-open"
-                    subprocess.call([opener, '7.mp4'])
-
-
 
 try:
     import requests
@@ -100,12 +82,11 @@ def download_episode(link, episodenumber):
                 print(f"[{c}] {dowopts[-12:-7]}")
         else:
             break
-    qchoice = int(input(f"Enter a download option (1-{c}): "))
-    schoice = int(input("[1] Stream\n[2] Download\nEnter an option (1-2): "))
-    url = dows[qchoice].find('a').attrs['href']
-    print(url)
+    q_choice = int(input(f"Enter a download option (1-{c}): "))
+    s_choice = int(input("[1] Stream (vlc required)\n[2] Download\nEnter an option (1-2): "))
+    url = dows[q_choice].find('a').attrs['href']
     r = requests.get(url, stream=True)
-    if schoice == 1:
-        stream(r)
+    if s_choice == 1:
+        subprocess.Popen(['vlc',url])
     else:
-        download(episodenumber,r)
+        download(episodenumber, r)

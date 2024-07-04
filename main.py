@@ -1,5 +1,4 @@
 import os
-import sys
 
 try:
     import requests, ffmpeg, selenium
@@ -11,8 +10,6 @@ except:
     from bs4 import BeautifulSoup
 
 from episodes import find_ep
-# check status code for response received
-# success code - 200
 
 titles = {}
 
@@ -28,7 +25,8 @@ def find_title(soupfn):
 
 search = input('Enter searched anime: ')
 headers = {
-    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) '
+                  'Mobile/15E148'}
 link = 'https://gogoanime3.co/search.html?keyword=' + search
 f = True
 while f:
@@ -37,13 +35,8 @@ while f:
         f = 0
     except:
         continue
-# time.sleep(5)
 soup = BeautifulSoup(search_source.content, 'html.parser')
 titles = find_title(soup)
-# f = open('allspan.html','w')
-# f.write(str(titles))
-# f.close()
-i=0
 for i in range(len(titles.keys())):
     try:
         print(f'[{i + 1}]', list(titles.keys())[i])
@@ -52,3 +45,5 @@ for i in range(len(titles.keys())):
 choice = input(f"Please Choose (1-{i+1}): ")
 gogolink = 'https://gogoanime3.co' + titles[list(titles.keys())[int(choice) - 1]]
 find_ep(gogolink)
+
+
