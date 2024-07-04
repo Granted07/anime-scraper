@@ -1,8 +1,39 @@
-import os, time
+import os, time, re
+import subprocess
+import sys
 
 from progress import print_progress_bar
 
 # from progress import print_progress_bar
+
+
+def download(episodenumber, r):
+    total_length = (int(r.headers.get('Content-Length'))) // 1024 ** 2
+    print("Downloading...")
+    print_progress_bar(0, total_length + 1, prefix='Progress:', suffix='Complete', length=50)
+    i = 0
+    with open(str(episodenumber) + '.mp4', 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024 ** 2):
+            if chunk:
+                i += 1
+                print_progress_bar(i, total_length, prefix='Progress:', suffix='Complete', length=50)
+                f.write(chunk)
+                f.flush()
+
+def stream(r):
+    with open(str('7.mp4') + '.mp4', 'wb') as f:
+        for chunk in r.iter_content(chunk_size=4000 ** 2):
+            if chunk:
+                f.write(chunk)
+                f.flush()
+                time.sleep(1)
+                try:
+                    os.startfile('7.mp4')
+                except:
+                    opener = "open" if sys.platform == "darwin" else "xdg-open"
+                    subprocess.call([opener, '7.mp4'])
+
+
 
 try:
     import requests
@@ -63,27 +94,18 @@ def download_episode(link, episodenumber):
         dowopts = links.find('a').text.replace('\n', '')
         if dowopts[-4:-1] == 'mp4':
             c += 1
-            print(f"[{c}] {dowopts}")
+            if dowopts[-12] in ' -)(':
+                print(f"[{c}] {dowopts[-11:-7]}")
+            else:
+                print(f"[{c}] {dowopts[-12:-7]}")
         else:
             break
-    qchoice = int(input(f"Enter a a download option (1-{c}): "))
+    qchoice = int(input(f"Enter a download option (1-{c}): "))
+    schoice = int(input("[1] Stream\n[2] Download\nEnter an option (1-2): "))
     url = dows[qchoice].find('a').attrs['href']
+    print(url)
     r = requests.get(url, stream=True)
-
-    total_length = (int(r.headers.get('Content-Length')))//1024**2
-    print("toallength: ", total_length)
-
-
-    print("Downloading...")
-    print_progress_bar(0, total_length + 1, prefix='Progress:', suffix='Complete', length=50)
-    i = 0
-    with open(str(episodenumber) + '.mp4', 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024**2):
-            if chunk:
-                i += 1
-                print_progress_bar(i, total_length, prefix='Progress:', suffix='Complete', length=50)
-                time.sleep(0.5)
-                f.write(chunk)
-                f.flush()
-
-    # print_progress_bar()
+    if schoice == 1:
+        stream(r)
+    else:
+        download(episodenumber,r)
