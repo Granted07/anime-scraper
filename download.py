@@ -1,5 +1,8 @@
+import os, time
 
-import os,time
+from progress import print_progress_bar
+
+# from progress import print_progress_bar
 
 try:
     import requests
@@ -64,12 +67,23 @@ def download_episode(link, episodenumber):
         else:
             break
     qchoice = int(input(f"Enter a a download option (1-{c}): "))
-    print("Downloading...")
     url = dows[qchoice].find('a').attrs['href']
-    r = requests.get(url)
-    with open(str(episodenumber)+'.mp4', 'wb') as f:
-        total_length = int(r.headers.get('Content-Length'))
-        for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
+    r = requests.get(url, stream=True)
+
+    total_length = (int(r.headers.get('Content-Length')))//1024**2
+    print("toallength: ", total_length)
+
+
+    print("Downloading...")
+    print_progress_bar(0, total_length + 1, prefix='Progress:', suffix='Complete', length=50)
+    i = 0
+    with open(str(episodenumber) + '.mp4', 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024**2):
             if chunk:
+                i += 1
+                print_progress_bar(i, total_length, prefix='Progress:', suffix='Complete', length=50)
+                time.sleep(0.5)
                 f.write(chunk)
                 f.flush()
+
+    # print_progress_bar()
