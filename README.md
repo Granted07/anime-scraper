@@ -2,14 +2,18 @@
 Scrapes gogoanime for a living
 
 ## Prerequisites
-- Makes sure to have Firefox installed. - https://www.mozilla.org/en-US/firefox/new/
+- Makes sure to have Firefox or Google Chrome installed.
 - Make sure you have vlc installed (if you want to use the stream feature). - https://www.videolan.org/vlc/download-windows.html
-- Also make sure to have Python 3.10 or higher installed and a virtual environment setup if required
-- Get the following python modules: 
-```pip install selenium beautifulsoup4 requests```
+- Also make sure to have Python 3.10 or higher installed 
 
-Now you are good to go! just run main.py using
-```python main.py```
-!
+## Setup
+### Windows
+Run the setup.bat file and you are good to go!
 
-P.S. (package installer coming soon)
+### Linux
+Run setup.sh using:
+
+```chmod +x ./setup.sh && ./setup.sh```
+
+then run the file using ``run.sh``
+

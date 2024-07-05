@@ -1,5 +1,6 @@
 import time
 import subprocess
+import os
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -12,7 +13,7 @@ def download(episode_number, r):
     print("Downloading...")
     print_progress_bar(0, total_length + 1, prefix='Progress:', suffix='Complete', length=50)
     i = 0
-    with open(str("Episode "+str(episode_number)) + '.mp4', 'wb') as f:
+    with open(str("Episode " + str(episode_number)) + '.mp4', 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024 ** 2):
             if chunk:
                 i += 1
@@ -71,11 +72,19 @@ def download_episode(link, episodenumber):
         else:
             break
     q_choice = int(input(f"\033[0mEnter a download option (\033[1;34;20m1-{c}\033[0m): \033[1;32;20m"))
-    s_choice = int(input("\033[1;34;20m[1] \033[1;35;20mStream (vlc required)\n\033[1;34;20m[2] \033["
-                         "1;35;20mDownload\n\033[0mEnter an option (\033[1;34;20m1-2\033[0m): "))
+    if os.name == 'nt':
+        s_choice = int(input("\033[1;34;20m[1] \033[1;35;20mStream (vlc is required in default Program Files x86 "
+                             "folder)\n\033[1;34;20m[2] \033["
+                             "1;35;20mDownload\n\033[0mEnter an option (\033[1;34;20m1-2\033[0m): "))
+    else:
+        s_choice = int(input("\033[1;34;20m[1] \033[1;35;20mStream (vlc required)\n\033[1;34;20m[2] \033["
+                             "1;35;20mDownload\n\033[0mEnter an option (\033[1;34;20m1-2\033[0m): "))
     url = dows[q_choice].find('a').attrs['href']
     r = requests.get(url, stream=True)
     if s_choice == 1:
-        subprocess.Popen(['vlc', url])
+        if os.name == 'nt':
+            subprocess.Popen([r'C:\Program Files (x86)\VideoLAN\VLC\vlc.exe', url])
+        else:
+            subprocess.Popen(['vlc', url])
     else:
         download(episodenumber, r)
