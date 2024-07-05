@@ -1,7 +1,14 @@
-import requests
-from bs4 import BeautifulSoup
-from episodes import find_ep
+import os
 
+try:
+    import requests, selenium
+    from bs4 import BeautifulSoup
+except:
+    os.system('pip install -r requirement.txt')
+    import requests
+    from bs4 import BeautifulSoup
+
+from episodes import find_ep
 titles = {}
 
 
@@ -12,21 +19,27 @@ def find_title(soupfn):
             titles[j.get_text()] = j.attrs['href']
     return titles
 
-
-search = input('Enter searched anime: \033[1;32;20m')
 headers = {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) '
                   'Mobile/15E148'}
-link = 'https://gogoanime3.co/search.html?keyword=' + search
-f = True
-while f:
-    try:
-        search_source = requests.get(link, timeout=10, headers=headers)
-        f = 0
-    except:
+while True:
+    search = input('Enter searched anime: \033[1;32;20m')
+    link = 'https://gogoanime3.co/search.html?keyword=' + search
+    f = True
+    while f:
+        try:
+            search_source = requests.get(link, timeout=10, headers=headers)
+            f = 0
+        except:
+            continue
+    soup = BeautifulSoup(search_source.content, 'html.parser')
+    titles = find_title(soup)
+    if len(titles.keys()) == 0:
+        "There are no search results :("
         continue
-soup = BeautifulSoup(search_source.content, 'html.parser')
-titles = find_title(soup)
+    else:
+        break
+
 i=0
 for i in range(len(titles.keys())):
     try:

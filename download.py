@@ -12,7 +12,7 @@ def download(episode_number, r):
     print("Downloading...")
     print_progress_bar(0, total_length + 1, prefix='Progress:', suffix='Complete', length=50)
     i = 0
-    with open(str("Episode "+episode_number) + '.mp4', 'wb') as f:
+    with open(str("Episode "+str(episode_number)) + '.mp4', 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024 ** 2):
             if chunk:
                 i += 1
