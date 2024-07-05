@@ -1,7 +1,7 @@
 import os
 
 try:
-    import requests, ffmpeg, selenium
+    import requests, selenium
     from bs4 import BeautifulSoup
 except:
     print('installing modules...')

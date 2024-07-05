@@ -1,6 +1,6 @@
-
 import os, time
 import subprocess
+
 from progress import print_progress_bar
 
 
@@ -17,11 +17,13 @@ def download(episode_number, r):
                 f.write(chunk)
                 f.flush()
 
+
 try:
     import requests
     from bs4 import BeautifulSoup
     from selenium import webdriver
     from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.firefox.service import Service
     from clint.textui import progress
 except:
     print('installing modules...')
@@ -30,6 +32,7 @@ except:
     from bs4 import BeautifulSoup
     from selenium import webdriver
     from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.firefox.service import Service
     from clint.textui import progress
 
 
@@ -58,10 +61,17 @@ def get_download_link(epNumber, gogolink):
 def download_episode(link, episodenumber):
     print("Fetching Download Options, please wait a sec...")
     global j, html
+    service = Service()
     options = webdriver.FirefoxOptions()
-    # options.add_argument("-profile")
+    # options.add_argument("-profile "+)
     options.add_argument("-headless")
-    driver = webdriver.Firefox(options=options)
+
+    try:
+        driver = webdriver.Firefox(options=options, service=service)
+    except:
+        result = subprocess.check_output('ls ~/.mozilla/firefox/| grep default-release', shell=True, text=True)
+        options.add_argument("-profile " + "\"~/.mozilla/firefox/" + result.replace('\n', '')+'"')
+        driver = webdriver.Firefox(options=options)
     # wait = WebDriverWait(driver, 100)
     driver.get(link)
     time.sleep(1.5)
@@ -87,6 +97,6 @@ def download_episode(link, episodenumber):
     url = dows[q_choice].find('a').attrs['href']
     r = requests.get(url, stream=True)
     if s_choice == 1:
-        subprocess.Popen(['vlc',url])
+        subprocess.Popen(['vlc', url])
     else:
         download(episodenumber, r)
