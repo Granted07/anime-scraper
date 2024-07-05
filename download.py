@@ -1,6 +1,9 @@
-import os, time
+import time
 import subprocess
-
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.firefox.service import Service
 from progress import print_progress_bar
 
 
@@ -9,31 +12,13 @@ def download(episode_number, r):
     print("Downloading...")
     print_progress_bar(0, total_length + 1, prefix='Progress:', suffix='Complete', length=50)
     i = 0
-    with open(str(episode_number) + '.mp4', 'wb') as f:
+    with open(str("Episode "+episode_number) + '.mp4', 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024 ** 2):
             if chunk:
                 i += 1
                 print_progress_bar(i, total_length, prefix='Progress:', suffix='Complete', length=50)
                 f.write(chunk)
                 f.flush()
-
-
-try:
-    import requests
-    from bs4 import BeautifulSoup
-    from selenium import webdriver
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.firefox.service import Service
-    from clint.textui import progress
-except:
-    print('installing modules...')
-    os.system('pip install -r requirement.txt')
-    import requests
-    from bs4 import BeautifulSoup
-    from selenium import webdriver
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.firefox.service import Service
-    from clint.textui import progress
 
 
 def get_download_link(epNumber, gogolink):
@@ -50,34 +35,27 @@ def get_download_link(epNumber, gogolink):
         except:
             continue
     soup = BeautifulSoup(search.text, 'html.parser')
-    # downlink = soup.find('li', class_='vidcdn').find('a')['data-video']
-    # content = requests.get(downlink).content
-    # soup = remove_tags(content)
-    # open('test.html', 'w').write(soup)
     downlink = soup.find('li', class_='dowloads').find('a')['href']
     download_episode(downlink, epNumber)
 
 
 def download_episode(link, episodenumber):
-    print("Fetching Download Options, please wait a sec...")
+    print("\033[1;36;20mFetching Download Options, please wait a sec...")
     global j, html
     service = Service()
-    options = webdriver.FirefoxOptions()
-    # options.add_argument("-profile "+)
-    options.add_argument("-headless")
-
-    try:
+    browser = int(open('installed-browser.txt', 'r').read().split('\n')[0][-1])
+    if browser == 1:
+        options = webdriver.FirefoxOptions()
+        options.add_argument("-headless")
         driver = webdriver.Firefox(options=options, service=service)
-    except:
-        result = subprocess.check_output('ls ~/.mozilla/firefox/| grep default-release', shell=True, text=True)
-        options.add_argument("-profile " + "\"~/.mozilla/firefox/" + result.replace('\n', '')+'"')
-        driver = webdriver.Firefox(options=options)
-    # wait = WebDriverWait(driver, 100)
+    else:
+        options = webdriver.ChromeOptions()
+        options.add_argument("-headless")
+        driver = webdriver.Chrome(service=service, options=options)
     driver.get(link)
     time.sleep(1.5)
     html = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
     driver.quit()
-    # print(html)
 
     soup = BeautifulSoup(html, 'html.parser')
     dows = soup.findAll('div', class_='dowload')
@@ -87,13 +65,13 @@ def download_episode(link, episodenumber):
         if dowopts[-4:-1] == 'mp4':
             c += 1
             if dowopts[-12] in ' -)(':
-                print(f"[{c}] {dowopts[-11:-7]}")
+                print(f"\033[1;34;20m[{c}] \033[1;35;20m{dowopts[-11:-7]}")
             else:
-                print(f"[{c}] {dowopts[-12:-7]}")
+                print(f"\033[1;34;20m[{c}] \033[1;35;20m{dowopts[-12:-7]}")
         else:
             break
-    q_choice = int(input(f"Enter a download option (1-{c}): "))
-    s_choice = int(input("[1] Stream (vlc required)\n[2] Download\nEnter an option (1-2): "))
+    q_choice = int(input(f"\033[0mEnter a download option (\033[1;34;20m1-{c}\033[0m): \033[1;32;20m"))
+    s_choice = int(input("\033[1;34;20m[1] \033[1;35;20mStream (vlc required)\n\033[1;34;20m[2] \033[1;35;20mDownload\n\033[0mEnter an option (\033[1;34;20m1-2\033[0m): "))
     url = dows[q_choice].find('a').attrs['href']
     r = requests.get(url, stream=True)
     if s_choice == 1:

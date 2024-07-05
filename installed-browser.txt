@@ -1,0 +1,3 @@
+Enter installed browser: 1
+[1] Firefox
+[2] Google Chrome

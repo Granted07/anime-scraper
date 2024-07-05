@@ -1,16 +1,6 @@
-import os
-
+import requests
+from bs4 import BeautifulSoup
 from download import get_download_link
-
-try:
-
-    import requests
-    from bs4 import BeautifulSoup
-except:
-    print('installing modules...')
-    os.system('python -m pip install requests beautifulsoup4')
-    import requests
-    from bs4 import BeautifulSoup
 
 
 def find_ep(gogolink):
@@ -23,9 +13,6 @@ def find_ep(gogolink):
             f = 0
         except:
             continue
-    # requests.session().close()
     soup = BeautifulSoup(r.content, 'html.parser')
     eps = soup.find_all('div', class_='anime_video_body')[0].find('a').getText().split('-')
-    get_download_link(int(input(f'Enter Episode ({int(eps[0]) + 1}-{int(eps[1])}): ')), gogolink)
-
-    # open('test.html', 'w', encoding="utf-8").write(soup.prettify())
+    get_download_link(int(input(f'\033[0mEnter Episode (\033[1;34;20m{int(eps[0]) + 1}-{int(eps[1])}\033[0m): \033[1;32;20m')), gogolink)
