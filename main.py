@@ -13,7 +13,7 @@ def find_title(soupfn):
     return titles
 
 
-search = input('Enter searched anime: \033[1;36;20m')
+search = input('Enter searched anime: \033[1;32;20m')
 headers = {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) '
                   'Mobile/15E148'}

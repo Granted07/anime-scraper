@@ -71,7 +71,8 @@ def download_episode(link, episodenumber):
         else:
             break
     q_choice = int(input(f"\033[0mEnter a download option (\033[1;34;20m1-{c}\033[0m): \033[1;32;20m"))
-    s_choice = int(input("\033[1;34;20m[1] \033[1;35;20mStream (vlc required)\n\033[1;34;20m[2] \033[1;35;20mDownload\n\033[0mEnter an option (\033[1;34;20m1-2\033[0m): "))
+    s_choice = int(input("\033[1;34;20m[1] \033[1;35;20mStream (vlc required)\n\033[1;34;20m[2] \033["
+                         "1;35;20mDownload\n\033[0mEnter an option (\033[1;34;20m1-2\033[0m): "))
     url = dows[q_choice].find('a').attrs['href']
     r = requests.get(url, stream=True)
     if s_choice == 1:
