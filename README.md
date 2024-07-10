@@ -7,6 +7,9 @@ Scrapes gogoanime for a living
 - Also make sure to have Python 3.10 or higher installed 
 
 ## Setup
+
+To start off, edit ```installed-browser.txt``` and choose your installed browser.
+
 ### Windows
 Run the setup.bat file and you are good to go!
 
