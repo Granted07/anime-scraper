@@ -44,7 +44,10 @@ def download_episode(link, episodenumber):
     print("\033[1;36;20mFetching Download Options, please wait a sec...")
     global j, html
     service = Service()
-    browser = int(open('installed-browser.txt', 'r').read().split('\n')[0][-1])
+    try:
+        browser: int = int(open('/installed-browser.txt', 'r').read().split('\n')[0][-1])
+    except:
+        browser: int = 1
     if browser == 1:
         options = webdriver.FirefoxOptions()
         options.add_argument("-headless")
